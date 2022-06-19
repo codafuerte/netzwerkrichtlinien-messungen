@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fortio-server-deployment
+  labels:
+    app: fortio-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fortio-server
+  template:
+    metadata:
+      labels:
+        app: fortio-server
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname:
+      serviceAccountName: fortio-server
+      containers:
+      - name: fortio-server
+        image: fortio/fortio:latest_release
+        imagePullPolicy: Always
+        ports: 
+        - containerPort: 8080
+---
