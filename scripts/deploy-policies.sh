@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 create_cilium_policy() {
-    cat<<YAML >./s2s/policies/cilium/policy$1.yaml
+    cat<<YAML >./richtlinien/s2s/cilium/policy$1.yaml
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
@@ -26,7 +26,7 @@ YAML
 }
 
 create_istio_policy() {
-    cat<<YAML >./s2s/policies/istio/policy$1.yaml
+    cat<<YAML >./richtlinien/s2s/istio/policy$1.yaml
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
@@ -62,12 +62,12 @@ create_policy() {
 }
 
 deploy_policy() {
-    kubectl apply -f ./messungen/policies/$1/policy$2.yaml
+    kubectl apply -f ./richtlinien/s2s/$1/policy$2.yaml
 }
 
 delete_policy() {
-    kubectl delete -f ./messungen/policies/$1/policy$2.yaml
-    rm ./messungen/policies/$1/policy$2.yaml
+    kubectl delete -f ./richtlinien/s2s/$1/policy$2.yaml
+    rm ./richtlinien/s2s/$1/policy$2.yaml
 }
 
 if [ "$2" != "cilium" ] && [ "$2" != "istio" ]; then

@@ -1,29 +1,23 @@
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: fortio-client
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fortio-client-deployment
+  name: fortio-server-deployment
   labels:
-    app: fortio-client
+    app: fortio-server
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: fortio-client
+      app: fortio-server
   template:
     metadata:
       labels:
-        app: fortio-client
+        app: fortio-server
     spec:
       nodeSelector:
-        kubernetes.io/hostname: stud-fb09-1826
-      serviceAccountName: fortio-client
+        kubernetes.io/hostname:
       containers:
-      - name: fortio-client
+      - name: fortio-server
         image: fortio/fortio:latest_release
         imagePullPolicy: Always
         ports: 

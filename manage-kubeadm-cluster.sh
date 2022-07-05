@@ -1,5 +1,4 @@
 # Taken from: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/  
-
 # Forwarding IPv4 and letting iptables see bridged traffic (see https://kubernetes.io/docs/setup/production-environment/container-runtimes/)
 prepare_container_runtime() {
     cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
@@ -57,15 +56,6 @@ install_cilium_cli() {
     echo "unpack cilium-cli tar file"
     sudo tar xzvfC cilium-linux-amd64.tar.gz /usr/local/bin
     rm cilium-linux-amd64.tar.gz && rm cilium-linux-amd64.tar.gz.sha256sum
-}
-
-install_skaffold() {
-    echo "Start installing Skaffold..."
-    echo "Downloading latest stable release of Skaffold"
-    curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64
-    echo "Installing Skaffold"
-    sudo install skaffold /usr/local/bin/ && rm skaffold
-    echo "$(skaffold version)"
 }
 
 # helm is needed to install cilium in kubeadm cluster
