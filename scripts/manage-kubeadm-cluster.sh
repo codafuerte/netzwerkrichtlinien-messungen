@@ -1,4 +1,5 @@
-# Taken from: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/  
+#!/bin/bash
+ 
 # Forwarding IPv4 and letting iptables see bridged traffic (see https://kubernetes.io/docs/setup/production-environment/container-runtimes/)
 prepare_container_runtime() {
     cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
@@ -27,13 +28,14 @@ setup_containerd() {
     sudo systemctl enable containerd
 }
 
-# In order for kubernetes to run, swap needs to be turned off. 
+# In order for kubernetes to run, swap needs to be turned off
 disable_swap() {
     echo "comment out the swap configuration."
     sudo sed -i '/ swap / s/^/#/' /etc/fstab
     sudo swapoff -a
 }
 
+# Taken from: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/ 
 install_kubernetes_dependencies() {
     echo "Update the apt package index and install packages needed to use the Kubernetes apt repository:"
     sudo apt-get update
@@ -46,52 +48,6 @@ install_kubernetes_dependencies() {
     sudo apt-get update
     sudo apt-get install -y kubelet kubeadm kubectl
     sudo apt-mark hold kubelet kubeadm kubectl
-}
-
-install_cilium_cli() {
-    echo "download cilium-cli tar file & checksum file" 
-    curl -L --remote-name-all https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz{,.sha256sum}
-    echo "Checking checksum"
-    sha256sum --check cilium-linux-amd64.tar.gz.sha256sum
-    echo "unpack cilium-cli tar file"
-    sudo tar xzvfC cilium-linux-amd64.tar.gz /usr/local/bin
-    rm cilium-linux-amd64.tar.gz && rm cilium-linux-amd64.tar.gz.sha256sum
-}
-
-# helm is needed to install cilium in kubeadm cluster
-install_helm() {
-    echo "downloading helm-tar file"
-    curl -O -L https://get.helm.sh/helm-v3.9.0-linux-amd64.tar.gz
-    echo "unpack tar-file"
-    sudo tar -zxvf helm-v3.9.0-linux-amd64.tar.gz
-    sudo mv linux-amd64/helm /usr/local/bin/helm
-    rm helm-v3.9.0-linux-amd64.tar.gz && sudo rm -r linux-amd64
-}
-
-deploy_cilium() {
-    case "$1" in 
-        helm)
-            echo "setup helm repository"
-            helm repo add cilium https://helm.cilium.io/
-            echo "deploy Cilium to Cluster"
-            helm install cilium cilium/cilium --namespace kube-system
-            exit 0
-            ;;
-        cilium-cli)
-            echo "deploy Cilium to Cluster"
-            cilium install
-            exit 0
-            ;;
-        *)
-            echo "Make sure to set 'helm' or 'cilium-cli'"
-            exit 1
-        ;;
-    esac
-}
-
-remove_cilium() {
-    echo "Remove Cilium from cluster"
-    cilium uninstall
 }
 
 init_cluster() {
@@ -109,18 +65,6 @@ case "$1" in
         ;;
     install-kubernetes-dependencies)
         install_kubernetes_dependencies
-        exit 0
-        ;;
-    install-helm)
-        install_helm
-        exit 0
-        ;;
-    deploy-cilium)
-        deploy_cilium $2
-        exit 0
-        ;;
-    remove-cilium)
-        remove_cilium $2
         exit 0
         ;;
     setup-containerd)
