@@ -2,6 +2,8 @@
 
 QPS_KEY="--qps="
 DURATION_KEY="--duration="
+CONNECTIONS_KEY="--connections="
+NUM_CALLS_KEY="--num-calls="
 SERVER_ADDRESS_KEY="--server-address="
 PORT_KEY="--port="
 OUTPUT_KEY="--output="
@@ -16,6 +18,12 @@ while [ $# -gt 0 ]; do
       ;;
     $DURATION_KEY*)
       DURATION_VALUE="${1:${#DURATION_KEY}}"
+      ;;
+    $CONNECTIONS_KEY*)
+      CONNECTIONS_VALUE="${1:${#CONNECTIONS_KEY}}"
+      ;;
+    $NUM_CALLS_KEY*)
+      NUM_CALLS_VALUE="${1:${#NUM_CALLS_KEY}}"
       ;;
     $SERVER_ADDRESS_KEY*)
       SERVER_ADDRESS_VALUE="${1:${#SERVER_ADDRESS_KEY}}"
@@ -48,8 +56,13 @@ if [ -z $QPS_VALUE ]; then
     exit 1
 fi
 
-if [ -z $DURATION_VALUE ]; then
-    echo "--duration must be set (e.g. --duration=5s)"
+if [ -z $DURATION_VALUE ] && [ -z $NUM_CALLS_VALUE ]; then
+    echo "either --duration or --num-calls must be set (e.g. --duration=5s)"
+    exit 1
+fi
+
+if [ ! -z $DURATION_VALUE ] && [ ! -z $NUM_CALLS_VALUE ]; then
+    echo "either --duration or --num-calls must be set (e.g. --duration=5s)"
     exit 1
 fi
 
@@ -70,4 +83,4 @@ fi
 
 FORTIO_POD_NAME=$( kubectl get pods --template '{{range .items}}{{.metadata.name}}{{end}}' --selector=app=fortio-client )
 
-echo $( kubectl exec $FORTIO_POD_NAME -c fortio-client -- /usr/bin/fortio load -qps $QPS_VALUE -t $DURATION_VALUE -json -$( if [ ! -z $PAYLOAD_VALUE ]; then echo " -payload '$PAYLOAD_VALUE' "; fi )$( if [ ! -z $CONTENT_TYPE_VALUE ]; then echo " -content-type $CONTENT_TYPE_VALUE "; fi )http://$SERVER_ADDRESS_VALUE:$PORT_VALUE/$PATH_VALUE ) | cat> ./ergebnisse/$OUTPUT_VALUE.json
+echo $( kubectl exec $FORTIO_POD_NAME -c fortio-client -- /usr/bin/fortio load -qps $QPS_VALUE $( if [ ! -z $DURATION_VALUE ]; then echo "-t $DURATION_VALUE"; else echo "-n $NUM_CALLS_VALUE"; fi ) -c $CONNECTIONS_VALUE -json -$( if [ ! -z $PAYLOAD_VALUE ]; then echo " -payload '$PAYLOAD_VALUE' "; fi )$( if [ ! -z $CONTENT_TYPE_VALUE ]; then echo " -content-type $CONTENT_TYPE_VALUE "; fi )http://$SERVER_ADDRESS_VALUE:$PORT_VALUE/$PATH_VALUE ) | cat> ./ergebnisse/$OUTPUT_VALUE.json
