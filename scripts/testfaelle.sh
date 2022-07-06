@@ -1,12 +1,13 @@
 #!/bin/bash
 
 # latenz
-
+FORTIO_CLIENT_HOST_NAME=$1
+FORTIO_SERVER_HOST_NAME=$2
 ##s2s
 s2s_latenz() {
 
-    FORTIO_CLIENT_HOST_NAME=$1
-    FORTIO_SERVER_HOST_NAME=$2
+    echo "$FORTIO_CLIENT_HOST_NAME"
+    echo "$FORTIO_SERVER_HOST_NAME"
 
     if [ -z "$FORTIO_CLIENT_HOST_NAME" ]; then
         echo "Make sure to set hostname, to which fortio-client should be deployed"
@@ -24,10 +25,10 @@ s2s_latenz() {
     # Fortio Server mit 1 Replika deployen 
     ./scripts/manage-fortio.sh deploy-fortio --role=server --host-name=${FORTIO_SERVER_HOST_NAME}
 
-    TECHNOLOGIES=('cilium' 'istio')
-    REPETITIONS=$(seq 2)
+    TECHNOLOGIES=( 'cilium' )
+    REPETITIONS=($(seq 1 2))
 
-    for technology in "${TECHNOLOGIEN[@]}"
+    for technology in "${TECHNOLOGIES[@]}"
     do
         # Netzwerkrichtlinie erstellen, die s2s Verkehr zulässt
         ./scripts/deploy-policies.sh create-and-deploy-policies $technology 1
@@ -35,17 +36,16 @@ s2s_latenz() {
         for i in "${REPETITIONS[@]}"
         do
             # Messung der s2s-Latenz bei minimaler Auslastung. Pro CPU 1 Thread und 1 Anfrage pro Sekunde
-            ./scripts/run-fortio-load.sh --qps=4 --num-calls=100 --server-address=fortio-server-service --port=8080 --output=s2s_latenz_${technology}_durchgang_${i} --content-type=application/json
+            ./scripts/run-fortio-load.sh --qps=4 --connections=4 --num-calls=100 --server-address=fortio-server-service --port=8080 --content-type=application/json --output=s2s_latenz_${technology}_durchgang_${i}
         done
         # Netzwerkrichtlinie löschen, die s2s Verkehr zulässt
         ./scripts/deploy-policies.sh delete-policies $technology 1
     done
 
     # Fortio Client löschen 
-    ./scripts/manage-fortio.sh deploy-fortio --role=client --host-name=${FORTIO_CLIENT_HOST_NAME}
-
+    ./scripts/manage-fortio.sh remove-fortio --role=client
     # Fortio Server löschen
-    ./scripts/manage-fortio.sh deploy-fortio --role=server --host-name=${FORTIO_SERVER_HOST_NAME}
+    ./scripts/manage-fortio.sh remove-fortio --role=server
 } 
 
 s2s_latenz

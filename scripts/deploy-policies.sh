@@ -51,6 +51,18 @@ YAML
 }
 
 create_policy() {
+    if [ ! -d "richtlinien" ]; then
+        mkdir richtlinien
+    fi
+
+    if [ ! -d "richtlinien/s2s" ]; then
+        mkdir richtlinien/s2s
+    fi
+
+    if [ ! -d "richtlinien/s2s/$1" ]; then
+        mkdir richtlinien/s2s/$1
+    fi
+    
     case "$1" in
         cilium)
             create_cilium_policy $2 $3

@@ -12,6 +12,7 @@ CONTENT_TYPE_KEY="--content-type="
 PAYLOAD_KEY="--payload="
 
 while [ $# -gt 0 ]; do
+  echo $1
   case "$1" in
     $QPS_KEY*)
       QPS_VALUE="${1:${#QPS_KEY}}"
@@ -44,7 +45,7 @@ while [ $# -gt 0 ]; do
       PAYLOAD_VALUE="${1:${#PAYLOAD_KEY}}"
       ;;
     *)
-      echo "Make sure to set valid arguments: --qps --duration --server-address --port --output --path --content-type --payload"
+      echo "Make sure to set valid arguments: --qps= --connections= --num-calls= --duration= --server-address= --port= --output= --path= --content-type= --payload="
       exit 1
       ;;
   esac
@@ -66,6 +67,11 @@ if [ ! -z $DURATION_VALUE ] && [ ! -z $NUM_CALLS_VALUE ]; then
     exit 1
 fi
 
+if [ -z $CONNECTIONS_VALUE ]; then
+    echo "--connections must be set (e.g. --qps=4)"
+    exit 1
+fi
+
 if [ -z $SERVER_ADDRESS_VALUE ]; then
     echo "--server-address must be set (e.g. --server-address=fortio-server)"
     exit 1
@@ -82,5 +88,14 @@ if [ -z $OUTPUT_VALUE ]; then
 fi
 
 FORTIO_POD_NAME=$( kubectl get pods --template '{{range .items}}{{.metadata.name}}{{end}}' --selector=app=fortio-client )
+DAY=$( date +%Y-%m-%d )
 
-echo $( kubectl exec $FORTIO_POD_NAME -c fortio-client -- /usr/bin/fortio load -qps $QPS_VALUE $( if [ ! -z $DURATION_VALUE ]; then echo "-t $DURATION_VALUE"; else echo "-n $NUM_CALLS_VALUE"; fi ) -c $CONNECTIONS_VALUE -json -$( if [ ! -z $PAYLOAD_VALUE ]; then echo " -payload '$PAYLOAD_VALUE' "; fi )$( if [ ! -z $CONTENT_TYPE_VALUE ]; then echo " -content-type $CONTENT_TYPE_VALUE "; fi )http://$SERVER_ADDRESS_VALUE:$PORT_VALUE/$PATH_VALUE ) | cat> ./ergebnisse/$OUTPUT_VALUE.json
+if [ ! -d "ergebnisse" ]; then
+  mkdir ergebnisse
+fi
+
+if [ ! -d "ergebnisse/${DAY}" ]; then
+  mkdir ergebnisse/${DAY}
+fi
+
+echo $( kubectl exec $FORTIO_POD_NAME -c fortio-client -- /usr/bin/fortio load -qps $QPS_VALUE $( if [ ! -z $DURATION_VALUE ]; then echo "-t $DURATION_VALUE"; else echo "-n $NUM_CALLS_VALUE"; fi ) -c $CONNECTIONS_VALUE -json -$( if [ ! -z $PAYLOAD_VALUE ]; then echo " -payload '$PAYLOAD_VALUE' "; fi )$( if [ ! -z $CONTENT_TYPE_VALUE ]; then echo " -content-type $CONTENT_TYPE_VALUE "; fi )http://$SERVER_ADDRESS_VALUE:$PORT_VALUE/$PATH_VALUE ) | cat> ./ergebnisse/${DAY}/${OUTPUT_VALUE}.json

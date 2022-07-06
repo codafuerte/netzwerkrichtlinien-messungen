@@ -1,5 +1,8 @@
 #!/bin/bash
 
+GKE_CLUSTER_NAME="netzwerkrichtlinien-messungen-cluster"
+ZONE="us-central1-a"
+
 install_cilium_cli() {
     echo "download cilium-cli tar file & checksum file" 
     curl -L --remote-name-all https://github.com/cilium/cilium-cli/releases/latest/download/cilium-linux-amd64.tar.gz{,.sha256sum}
@@ -24,38 +27,22 @@ remove_cilium() {
     cilium uninstall
 }
 
-deploy_cilium() {
-    GKE_CLUSTER_NAME="netzwerkrichtlinien-messungen-cluster"
-    ZONE="us-central1-a"    
-    case "$1" in 
-        helm)
-            echo "setup helm repository"
-            helm repo add cilium https://helm.cilium.io/
-            echo "Extract the Cluster CIDR to enable native-routing:"
-            NATIVE_CIDR="$(gcloud container clusters describe "${GKE_CLUSTER_NAME}" --zone "${ZONE}" --format 'value(clusterIpv4Cidr)')"
-            echo "deploy Cilium to Cluster"
-            helm install cilium cilium/cilium --version 1.11.6 \
-                --namespace kube-system \
-                --set bpf.policyMapMax=32768 \
-                --set nodeinit.enabled=true \
-                --set nodeinit.reconfigureKubelet=true \
-                --set nodeinit.removeCbrBridge=true \
-                --set cni.binPath=/home/kubernetes/bin \
-                --set gke.enabled=true \
-                --set ipam.mode=kubernetes \
-                --set ipv4NativeRoutingCIDR=$NATIVE_CIDR
-            exit 0
-            ;;
-        cilium-cli)
-            echo "deploy Cilium to Cluster"
-            cilium install --version 1.11.6
-            exit 0
-            ;;
-        *)
-            echo "Make sure to set 'helm' or 'cilium-cli'"
-            exit 1
-        ;;
-    esac
+deploy_cilium() { 
+    echo "setup helm repository"
+    helm repo add cilium https://helm.cilium.io/
+    echo "Extract the Cluster CIDR to enable native-routing:"
+    NATIVE_CIDR="$(gcloud container clusters describe "${GKE_CLUSTER_NAME}" --zone "${ZONE}" --format 'value(clusterIpv4Cidr)')"
+    echo "deploy Cilium to Cluster"
+    helm install cilium cilium/cilium --version 1.11.6 \
+        --namespace kube-system \
+        --set bpf.policyMapMax=32768 \
+        --set nodeinit.enabled=true \
+        --set nodeinit.reconfigureKubelet=true \
+        --set nodeinit.removeCbrBridge=true \
+        --set cni.binPath=/home/kubernetes/bin \
+        --set gke.enabled=true \
+        --set ipam.mode=kubernetes \
+        --set ipv4NativeRoutingCIDR=$NATIVE_CIDR
 }
 
 case "$1" in 
