@@ -1,3 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fortio-server-service
+  labels:
+    app: fortio-server
+    service: fortio-server
+spec:
+  ports:
+  - port: 8080
+    name: http
+  selector:
+    app: fortio-server
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,11 +29,10 @@ spec:
         app: fortio-server
     spec:
       nodeSelector:
-        kubernetes.io/hostname:
+        kubernetes.io/hostname: gke-netzwerkrichtlinien--default-pool-65ce6097-vrwb
       containers:
       - name: fortio-server
         image: fortio/fortio:latest_release
         imagePullPolicy: Always
         ports: 
         - containerPort: 8080
----

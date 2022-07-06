@@ -20,7 +20,7 @@ spec:
         app: fortio-client
     spec:
       nodeSelector:
-        kubernetes.io/hostname: 
+        kubernetes.io/hostname: gke-netzwerkrichtlinien--default-pool-65ce6097-qcsh 
       serviceAccountName: fortio-client
       containers:
       - name: fortio-client

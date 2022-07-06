@@ -9,8 +9,6 @@ PATH_KEY="--path="
 CONTENT_TYPE_KEY="--content-type="
 PAYLOAD_KEY="--payload="
 
-echo "$1"
-
 while [ $# -gt 0 ]; do
   case "$1" in
     $QPS_KEY*)
@@ -38,7 +36,7 @@ while [ $# -gt 0 ]; do
       PAYLOAD_VALUE="${1:${#PAYLOAD_KEY}}"
       ;;
     *)
-      echo "Make sure to set valid arguments: --qps --duration --server-address --port"
+      echo "Make sure to set valid arguments: --qps --duration --server-address --port --output --path --content-type --payload"
       exit 1
       ;;
   esac
@@ -70,6 +68,6 @@ if [ -z $OUTPUT_VALUE ]; then
     exit 1
 fi
 
-FORTIO_POD_NAME=$( kubectl get pods --template '{{range .items}}{{.metadata.name}}{{end}}' --selector=app=fortio-server )
+FORTIO_POD_NAME=$( kubectl get pods --template '{{range .items}}{{.metadata.name}}{{end}}' --selector=app=fortio-client )
 
-echo $( kubectl exec $FORTIO_POD_NAME -c fortio -- /usr/bin/fortio load -qps $QPS_VALUE -t $DURATION_VALUE -json -$( if [ ! -z $PAYLOAD_VALUE ]; then echo " -payload '$PAYLOAD_VALUE' "; fi )$( if [ ! -z $CONTENT_TYPE_VALUE ]; then echo " -content-type $CONTENT_TYPE_VALUE "; fi )http://$SERVER_ADDRESS_VALUE:$PORT_VALUE/$PATH_VALUE ) | cat> ./messungen/ergebnisse/$OUTPUT_VALUE.json
+echo $( kubectl exec $FORTIO_POD_NAME -c fortio-client -- /usr/bin/fortio load -qps $QPS_VALUE -t $DURATION_VALUE -json -$( if [ ! -z $PAYLOAD_VALUE ]; then echo " -payload '$PAYLOAD_VALUE' "; fi )$( if [ ! -z $CONTENT_TYPE_VALUE ]; then echo " -content-type $CONTENT_TYPE_VALUE "; fi )http://$SERVER_ADDRESS_VALUE:$PORT_VALUE/$PATH_VALUE ) | cat> ./ergebnisse/$OUTPUT_VALUE.json
