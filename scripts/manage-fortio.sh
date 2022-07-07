@@ -69,7 +69,7 @@ case "$COMMAND" in
         exit 0
         ;;
     *)
-        echo "Make sure to set valid command: deploy-fortio, remove-fortio, scale-fortio"
+        echo "Make sure to set valid argument: deploy-fortio, remove-fortio, scale-fortio"
         exit 1
         ;;
 esac

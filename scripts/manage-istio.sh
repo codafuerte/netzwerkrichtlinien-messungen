@@ -12,8 +12,8 @@ install_istioctl() {
 }
 
 deploy_istio() {
-  echo "Deploying Istio with demo-configuration"
-  istioctl install --set profile=demo -y
+  echo "Deploying Istio with default kubectl-configuration"
+  istioctl install --set profile=default -y
   echo  "Installation of istioctl succesful: $(istioctl version)"
   echo "Injecting Istio to the default namespace"
   kubectl label namespace default istio-injection=enabled
@@ -22,6 +22,10 @@ deploy_istio() {
 
 remove_istio() {
   echo "remove istio from cluster"
+  istioctl manifest generate --set profile=demo | kubectl delete --ignore-not-found=true -f -
+  istioctl tag remove default
+  kubectl delete namespace istio-system
+  kubectl delete namespace istio-system
 }
 
 case "$1" in 

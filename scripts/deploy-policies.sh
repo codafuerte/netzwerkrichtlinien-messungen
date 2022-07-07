@@ -21,7 +21,7 @@ spec:
       rules:
         http:
         - method: "POST"
-          path: "/$( if [ $1 != $2 ]; then echo "/$1"; fi )"
+          path: "/$( if [ $1 != $2 ]; then echo "$1"; fi )"
 YAML
 }
 
@@ -46,7 +46,7 @@ spec:
    - operation:
        ports: ["8080"]
        methods: ["POST"]
-       paths: ["/$( if [ $1 != $2 ]; then echo "/$1"; fi )"]
+       paths: ["/$( if [ $1 != $2 ]; then echo "$1"; fi )"]
 YAML
 }
 
