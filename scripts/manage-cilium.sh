@@ -30,8 +30,10 @@ remove_cilium() {
 deploy_cilium() { 
     echo "setup helm repository"
     helm repo add cilium https://helm.cilium.io/
-    echo "Extract the Cluster CIDR to enable native-routing:"
+    echo "Extract the Cluster CIDR to enable native-routing"
     NATIVE_CIDR="$(gcloud container clusters describe "${GKE_CLUSTER_NAME}" --zone "${ZONE}" --format 'value(clusterIpv4Cidr)')"
+    echo "delete existing secrets"
+    kubectl delete secret -n kube-system $( kubectl -n kube-system get secrets --template '{{range .items}}{{.metadata.name}}{{end}}' --selector=name=cilium )
     echo "deploy Cilium to Cluster"
     helm install cilium cilium/cilium --version 1.11.6 \
         --namespace kube-system \
