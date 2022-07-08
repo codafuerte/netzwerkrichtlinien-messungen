@@ -1,0 +1,175 @@
+{
+  "RunType": "HTTP",
+  "Labels": "fortio-server-service:8080/ , fortio-client-deployment-6bb485cbc9-llqsh",
+  "StartTime": "2022-07-07T17:14:26.795750524Z",
+  "RequestedQPS": "max",
+  "RequestedDuration": "30s",
+  "ActualQPS": 75020.03950372784,
+  "ActualDuration": 30000610702,
+  "NumThreads": 32,
+  "Version": "1.34.1",
+  "DurationHistogram": {
+    "Count": 2250647,
+    "Min": 0.000081915,
+    "Max": 0.020046824,
+    "Sum": 959.338365177999,
+    "Avg": 0.00042625003617981807,
+    "StdDev": 0.00034068307426074387,
+    "Data": [
+      {
+        "Start": 0.000081915,
+        "End": 0.001,
+        "Percent": 96.08063814538664,
+        "Count": 2162436
+      },
+      {
+        "Start": 0.001,
+        "End": 0.002,
+        "Percent": 99.57856563023877,
+        "Count": 78726
+      },
+      {
+        "Start": 0.002,
+        "End": 0.003,
+        "Percent": 99.85470844606017,
+        "Count": 6215
+      },
+      {
+        "Start": 0.003,
+        "End": 0.004,
+        "Percent": 99.91784584610559,
+        "Count": 1421
+      },
+      {
+        "Start": 0.004,
+        "End": 0.005,
+        "Percent": 99.9469930202293,
+        "Count": 656
+      },
+      {
+        "Start": 0.005,
+        "End": 0.006,
+        "Percent": 99.96605420574618,
+        "Count": 429
+      },
+      {
+        "Start": 0.006,
+        "End": 0.007,
+        "Percent": 99.98040563446867,
+        "Count": 323
+      },
+      {
+        "Start": 0.007,
+        "End": 0.008,
+        "Percent": 99.98667049963855,
+        "Count": 141
+      },
+      {
+        "Start": 0.008,
+        "End": 0.009000000000000001,
+        "Percent": 99.99066934974698,
+        "Count": 90
+      },
+      {
+        "Start": 0.009000000000000001,
+        "End": 0.01,
+        "Percent": 99.9942238831767,
+        "Count": 80
+      },
+      {
+        "Start": 0.01,
+        "End": 0.011,
+        "Percent": 99.99773398493855,
+        "Count": 79
+      },
+      {
+        "Start": 0.011,
+        "End": 0.012,
+        "Percent": 99.99862261829598,
+        "Count": 20
+      },
+      {
+        "Start": 0.012,
+        "End": 0.014,
+        "Percent": 99.99964454665702,
+        "Count": 23
+      },
+      {
+        "Start": 0.014,
+        "End": 0.016,
+        "Percent": 99.99991113666425,
+        "Count": 6
+      },
+      { "Start": 0.02, "End": 0.020046824, "Percent": 100, "Count": 2 }
+    ],
+    "Percentiles": [
+      { "Percentile": 50, "Value": 0.0005596827513601565 },
+      { "Percentile": 75, "Value": 0.0007985668393206038 },
+      { "Percentile": 90, "Value": 0.0009418972920968722 },
+      { "Percentile": 99, "Value": 0.001834597591646978 },
+      { "Percentile": 99.9, "Value": 0.003717349049964858 }
+    ]
+  },
+  "ErrorsDurationHistogram": {
+    "Count": 0,
+    "Min": 0,
+    "Max": 0,
+    "Sum": 0,
+    "Avg": 0,
+    "StdDev": 0,
+    "Data": null,
+    "Percentiles": null
+  },
+  "Exactly": 0,
+  "Jitter": false,
+  "Uniform": false,
+  "NoCatchUp": false,
+  "RunID": 0,
+  "AccessLoggerInfo": "",
+  "RetCodes": { "200": 2250647 },
+  "IPCountMap": { "10.28.12.206:8080": 32 },
+  "Insecure": false,
+  "CACert": "",
+  "Cert": "",
+  "Key": "",
+  "UnixDomainSocket": "",
+  "URL": "http://fortio-server-service:8080/",
+  "NumConnections": 1,
+  "Compression": false,
+  "DisableFastClient": false,
+  "HTTP10": false,
+  "DisableKeepAlive": false,
+  "AllowHalfClose": false,
+  "FollowRedirects": false,
+  "Resolve": "",
+  "HTTPReqTimeOut": 3000000000,
+  "UserCredentials": "",
+  "ContentType": "application/json",
+  "Payload": "",
+  "LogErrors": true,
+  "ID": 0,
+  "SequentialWarmup": false,
+  "ConnReuseRange": [0, 0],
+  "Sizes": {
+    "Count": 2250647,
+    "Min": 107,
+    "Max": 107,
+    "Sum": 240819229,
+    "Avg": 107,
+    "StdDev": 0,
+    "Data": [{ "Start": 107, "End": 107, "Percent": 100, "Count": 2250647 }],
+    "Percentiles": null
+  },
+  "HeaderSizes": {
+    "Count": 2250647,
+    "Min": 107,
+    "Max": 107,
+    "Sum": 240819229,
+    "Avg": 107,
+    "StdDev": 0,
+    "Data": [{ "Start": 107, "End": 107, "Percent": 100, "Count": 2250647 }],
+    "Percentiles": null
+  },
+  "SocketCount": 32,
+  "AbortOn": 0
+}

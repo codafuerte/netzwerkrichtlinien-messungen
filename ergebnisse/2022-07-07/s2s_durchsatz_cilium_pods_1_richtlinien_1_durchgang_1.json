@@ -1,0 +1,187 @@
+{
+  "RunType": "HTTP",
+  "Labels": "fortio-server-service:8080/ , fortio-client-deployment-6bb485cbc9-llqsh",
+  "StartTime": "2022-07-07T17:13:51.276323068Z",
+  "RequestedQPS": "max",
+  "RequestedDuration": "30s",
+  "ActualQPS": 74390.11352465308,
+  "ActualDuration": 30000518809,
+  "NumThreads": 32,
+  "Version": "1.34.1",
+  "DurationHistogram": {
+    "Count": 2231742,
+    "Min": 0.000075212,
+    "Max": 0.021522531,
+    "Sum": 959.3365342699994,
+    "Avg": 0.00042985996332461343,
+    "StdDev": 0.0003569131741501299,
+    "Data": [
+      {
+        "Start": 0.000075212,
+        "End": 0.001,
+        "Percent": 95.93286320730623,
+        "Count": 2140974
+      },
+      {
+        "Start": 0.001,
+        "End": 0.002,
+        "Percent": 99.52378007852163,
+        "Count": 80140
+      },
+      {
+        "Start": 0.002,
+        "End": 0.003,
+        "Percent": 99.82901249337961,
+        "Count": 6812
+      },
+      {
+        "Start": 0.003,
+        "End": 0.004,
+        "Percent": 99.90608233388986,
+        "Count": 1720
+      },
+      {
+        "Start": 0.004,
+        "End": 0.005,
+        "Percent": 99.94313858860029,
+        "Count": 827
+      },
+      {
+        "Start": 0.005,
+        "End": 0.006,
+        "Percent": 99.96249566482147,
+        "Count": 432
+      },
+      {
+        "Start": 0.006,
+        "End": 0.007,
+        "Percent": 99.97257747535333,
+        "Count": 225
+      },
+      {
+        "Start": 0.007,
+        "End": 0.008,
+        "Percent": 99.98382429510221,
+        "Count": 251
+      },
+      {
+        "Start": 0.008,
+        "End": 0.009000000000000001,
+        "Percent": 99.9886635641575,
+        "Count": 108
+      },
+      {
+        "Start": 0.009000000000000001,
+        "End": 0.01,
+        "Percent": 99.99238263204259,
+        "Count": 83
+      },
+      {
+        "Start": 0.01,
+        "End": 0.011,
+        "Percent": 99.99471265047663,
+        "Count": 52
+      },
+      {
+        "Start": 0.011,
+        "End": 0.012,
+        "Percent": 99.99672901258299,
+        "Count": 45
+      },
+      {
+        "Start": 0.012,
+        "End": 0.014,
+        "Percent": 99.99807325398724,
+        "Count": 30
+      },
+      {
+        "Start": 0.014,
+        "End": 0.016,
+        "Percent": 99.99843171836172,
+        "Count": 8
+      },
+      {
+        "Start": 0.016,
+        "End": 0.018000000000000002,
+        "Percent": 99.99986557585957,
+        "Count": 32
+      },
+      {
+        "Start": 0.018000000000000002,
+        "End": 0.02,
+        "Percent": 99.99995519195319,
+        "Count": 2
+      },
+      { "Start": 0.02, "End": 0.021522531, "Percent": 100, "Count": 1 }
+    ],
+    "Percentiles": [
+      { "Percentile": 50, "Value": 0.0005572092907458431 },
+      { "Percentile": 75, "Value": 0.0007982081520925299 },
+      { "Percentile": 90, "Value": 0.0009428074689005419 },
+      { "Percentile": 99, "Value": 0.0018541375093586213 },
+      { "Percentile": 99.9, "Value": 0.003921080232558138 }
+    ]
+  },
+  "ErrorsDurationHistogram": {
+    "Count": 0,
+    "Min": 0,
+    "Max": 0,
+    "Sum": 0,
+    "Avg": 0,
+    "StdDev": 0,
+    "Data": null,
+    "Percentiles": null
+  },
+  "Exactly": 0,
+  "Jitter": false,
+  "Uniform": false,
+  "NoCatchUp": false,
+  "RunID": 0,
+  "AccessLoggerInfo": "",
+  "RetCodes": { "200": 2231742 },
+  "IPCountMap": { "10.28.12.206:8080": 32 },
+  "Insecure": false,
+  "CACert": "",
+  "Cert": "",
+  "Key": "",
+  "UnixDomainSocket": "",
+  "URL": "http://fortio-server-service:8080/",
+  "NumConnections": 1,
+  "Compression": false,
+  "DisableFastClient": false,
+  "HTTP10": false,
+  "DisableKeepAlive": false,
+  "AllowHalfClose": false,
+  "FollowRedirects": false,
+  "Resolve": "",
+  "HTTPReqTimeOut": 3000000000,
+  "UserCredentials": "",
+  "ContentType": "application/json",
+  "Payload": "",
+  "LogErrors": true,
+  "ID": 0,
+  "SequentialWarmup": false,
+  "ConnReuseRange": [0, 0],
+  "Sizes": {
+    "Count": 2231742,
+    "Min": 107,
+    "Max": 107,
+    "Sum": 238796394,
+    "Avg": 107,
+    "StdDev": 0,
+    "Data": [{ "Start": 107, "End": 107, "Percent": 100, "Count": 2231742 }],
+    "Percentiles": null
+  },
+  "HeaderSizes": {
+    "Count": 2231742,
+    "Min": 107,
+    "Max": 107,
+    "Sum": 238796394,
+    "Avg": 107,
+    "StdDev": 0,
+    "Data": [{ "Start": 107, "End": 107, "Percent": 100, "Count": 2231742 }],
+    "Percentiles": null
+  },
+  "SocketCount": 32,
+  "AbortOn": 0
+}

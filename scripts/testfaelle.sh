@@ -71,30 +71,42 @@ s2s_test_bed() {
 
     REPETITIONS=($(seq 1 ${REPETITIONS}))
     
-    for i in "${REPETITIONS[@]}"
+
+    for pod in "${NUM_PODS[@]}"
     do
-        for pod in "${NUM_PODS[@]}"
+
+            # Fortio Server skalieren
+        ./scripts/manage-fortio.sh scale-fortio --num-pods=${pod} --role=server
+        # Warten bis Pods Ready sind
+        kubectl wait --for=condition=ready pods --all --timeout=60s
+
+        for policy in "${NUM_POLICIES[@]}"
         do
-
-             # Fortio Server skalieren
-            ./scripts/manage-fortio.sh scale-fortio --num-pods=${pod} --role=server
-            # Warten bis Pods Ready sind
-            kubectl wait --for=condition=ready pods --all --timeout=60s
-
-            for policy in "${NUM_POLICIES[@]}"
-            do
+            if [ "$TECHNOLOGY" != "base" ]; then
                 # Netzwerkrichtlinien erstellen
                 ./scripts/deploy-policies.sh create-and-deploy-policies $TECHNOLOGY $policy
+            fi
 
-                OUTPUT=--output=s2s_${TEST_CASE}_${TECHNOLOGY}_pods_${pod}_richtlinien_${policy}_durchgang_${i}
-                FORTIO_SCRIPT="${2} ${OUTPUT}"
+            for i in "${REPETITIONS[@]}"
+            do
+                TIMESTAMP=$( date +%H-%M-%S )
 
+                OUTPUT=s2s_${TEST_CASE}_${TECHNOLOGY}_pods_${pod}_richtlinien_${policy}_durchgang_${TIMESTAMP}
+                FORTIO_SCRIPT="${2} --output=${OUTPUT}"
+               
                 # Messung durchführen
+                nohup gcloud beta compute ssh ${FORTIO_SERVER_HOST_NAME} --zone=${ZONE} --command="nohup top -b -d 0.5 > \"${OUTPUT}-top.txt\"" 2>&1 &
+                NOHUP_PROCESS_ID=$!
                 $( $FORTIO_SCRIPT )
-
-                 # Netzwerkrichtlinien löschen
-                ./scripts/deploy-policies.sh delete-policies $TECHNOLOGY $policy
+                kill ${NOHUP_PROCESS_ID}
+                gcloud beta compute ssh ${FORTIO_SERVER_HOST_NAME} --zone=${ZONE} --command="kill \$(pidof top)"
+                gcloud compute scp ${FORTIO_SERVER_HOST_NAME}:~/${OUTPUT}-top.txt ./ergebnisse/${DAY}
             done
+
+            if [ "$TECHNOLOGY" != "base" ]; then
+                # Netzwerkrichtlinien erstellen
+                ./scripts/deploy-policies.sh delete-policies $TECHNOLOGY $policy
+            fi
         done
     done
 
@@ -110,10 +122,6 @@ latenz() {
     NUM_PODS=( 1 )
     NUM_POLICIES=( 1 )
     FORTIO_SCRIPT='./scripts/run-fortio-load.sh --qps=4 --connections=4 --num-calls=100 --server-address=fortio-server-service --port=8080 --content-type=application/json' 
-    TECHNOLOGY=$1
-    NUM_REPITIONS=$2
-    FORTIO_CLIENT_HOST_NAME=$3
-    FORTIO_SERVER_HOST_NAME=$4
 
     s2s_test_bed latenz "$FORTIO_SCRIPT" "$TECHNOLOGY" "$NUM_REPITIONS" "$NUM_PODS" "$NUM_POLICIES" "$FORTIO_CLIENT_HOST_NAME" "$FORTIO_SERVER_HOST_NAME"
 }
@@ -124,10 +132,6 @@ durchsatz() {
     NUM_PODS=( 1 )
     NUM_POLICIES=( 1 )
     FORTIO_SCRIPT='./scripts/run-fortio-load.sh --qps=0 --connections=32 --duration=30s --server-address=fortio-server-service --port=8080 --content-type=application/json'
-    TECHNOLOGY=$1
-    NUM_REPITIONS=$2
-    FORTIO_CLIENT_HOST_NAME=$3
-    FORTIO_SERVER_HOST_NAME=$4
 
     s2s_test_bed durchsatz "$FORTIO_SCRIPT" "$TECHNOLOGY" "$NUM_REPITIONS" "$NUM_PODS" "$NUM_POLICIES" "$FORTIO_CLIENT_HOST_NAME" "$FORTIO_SERVER_HOST_NAME"
 }
@@ -139,10 +143,6 @@ richtlinien_skalierbarkeit() {
     NUM_PODS=( 1 )
     NUM_POLICIES=( 1 2 4 8 16 32 64 128 256 512 )
     FORTIO_SCRIPT='./scripts/run-fortio-load.sh --qps=0 --connections=32 --duration=30s --server-address=fortio-server-service --port=8080 --content-type=application/json'
-    TECHNOLOGY=$1
-    NUM_REPITIONS=$2
-    FORTIO_CLIENT_HOST_NAME=$3
-    FORTIO_SERVER_HOST_NAME=$4
 
     s2s_test_bed richtlinien_skalierbarkeit "$FORTIO_SCRIPT" "$TECHNOLOGY" "$NUM_REPITIONS" "$NUM_PODS" "$NUM_POLICIES" "$FORTIO_CLIENT_HOST_NAME" "$FORTIO_SERVER_HOST_NAME"
 }
@@ -154,10 +154,6 @@ pod_skalierbarkeit() {
     NUM_PODS=( 1 5 10 15 20 25 30 35 50 45 50 55 60 )
     NUM_POLICIES=( 1 )
     FORTIO_SCRIPT='./scripts/run-fortio-load.sh --qps=0 --connections=32 --duration=30s --server-address=fortio-server-service --port=8080 --content-type=application/json'
-    TECHNOLOGY=$1
-    NUM_REPITIONS=$2
-    FORTIO_CLIENT_HOST_NAME=$3
-    FORTIO_SERVER_HOST_NAME=$4
 
     s2s_test_bed pod_skalierbarkeit "$FORTIO_SCRIPT" "$TECHNOLOGY" "$NUM_REPITIONS" "$NUM_PODS" "$NUM_POLICIES" "$FORTIO_CLIENT_HOST_NAME" "$FORTIO_SERVER_HOST_NAME"
 }
@@ -179,31 +175,47 @@ teardown() {
     fi
 }
 
-setup $2
-case "$1" in 
+TEST_CASE=$1
+TECHNOLOGY=$2
+NUM_REPITIONS=$3
+FORTIO_CLIENT_HOST_NAME=$4
+FORTIO_SERVER_HOST_NAME=$5
+DAY=$( date +%Y-%m-%d )
+ZONE="us-central1-a"
+
+if [ ! -d "ergebnisse" ]; then
+    mkdir ergebnisse
+fi
+
+if [ ! -d "ergebnisse/${DAY}" ]; then
+    mkdir ergebnisse/${DAY}
+fi
+
+setup $TECHNOLOGY
+case "$TEST_CASE" in 
     latenz)
-        latenz $2 $3 $4
+        latenz $TECHNOLOGY $NUM_REPITIONS $FORTIO_CLIENT_HOST_NAME $FORTIO_SERVER_HOST_NAME
         ;;
     durchsatz)
-        durchsatz $2 $3 $4
+        durchsatz $TECHNOLOGY $NUM_REPITIONS $FORTIO_CLIENT_HOST_NAME $FORTIO_SERVER_HOST_NAME
         ;;
     richtlinien-skalierbarkeit)
-        richtlinien_skalierbarkeit $2 $3 $4
+        richtlinien_skalierbarkeit $TECHNOLOGY $NUM_REPITIONS $FORTIO_CLIENT_HOST_NAME $FORTIO_SERVER_HOST_NAME
         ;;
     pod-skalierbarkeit)
-        pod_skalierbarkeit $2 $3 $4
+        pod_skalierbarkeit $TECHNOLOGY $NUM_REPITIONS $FORTIO_CLIENT_HOST_NAME $FORTIO_SERVER_HOST_NAME
         ;;
     alle-messungen)
-        latenz $2 $3 $4
-        durchsatz $2 $3 $4
-        richtlinien_skalierbarkeit $2 $3 $4
-        pod_skalierbarkeit $2 $3 $4
+        latenz $TECHNOLOGY $NUM_REPITIONS $FORTIO_CLIENT_HOST_NAME $FORTIO_SERVER_HOST_NAME
+        durchsatz $TECHNOLOGY $NUM_REPITIONS $FORTIO_CLIENT_HOST_NAME $FORTIO_SERVER_HOST_NAME
+        richtlinien_skalierbarkeit $TECHNOLOGY $NUM_REPITIONS $FORTIO_CLIENT_HOST_NAME $FORTIO_SERVER_HOST_NAME
+        pod_skalierbarkeit $TECHNOLOGY $NUM_REPITIONS $FORTIO_CLIENT_HOST_NAME $FORTIO_SERVER_HOST_NAME
         ;;
     *)
         echo "provide valid command"
         exit 1
         ;;
 esac
-teardown $2
+teardown $TECHNOLOGY
 
 #gke-netzwerkrichtlinien--default-pool-65ce6097-qcsh gke-netzwerkrichtlinien--default-pool-65ce6097-vrwb
