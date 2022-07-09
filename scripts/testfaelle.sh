@@ -151,7 +151,7 @@ richtlinien_skalierbarkeit() {
 # Pod-Skalierbarkeit
 # Durchsatz bei steigender Anzahl von Pods
 pod_skalierbarkeit() {
-    NUM_PODS=( 1 5 10 15 20 25 30 35 50 45 50 55 60 )
+    NUM_PODS=( 1 5 10 15 20 25 30 35 40 45 50 55 60 )
     NUM_POLICIES=( 1 )
     FORTIO_SCRIPT='./scripts/run-fortio-load.sh --qps=0 --connections=32 --duration=30s --server-address=fortio-server-service --port=8080 --content-type=application/json'
 
@@ -168,11 +168,11 @@ setup() {
 }
 
 teardown() {
-    ./scripts/manage-cilium.sh remove-cilium
     if [ "$1" == "istio" ]; then
         ./scripts/manage-istio.sh remove-istio
         kubectl wait --for=condition=ready pods --all -n kube-system --timeout=60s
     fi
+    ./scripts/manage-cilium.sh remove-cilium
 }
 
 TEST_CASE=$1
@@ -217,5 +217,3 @@ case "$TEST_CASE" in
         ;;
 esac
 teardown $TECHNOLOGY
-
-#gke-netzwerkrichtlinien--default-pool-65ce6097-qcsh gke-netzwerkrichtlinien--default-pool-65ce6097-vrwb
