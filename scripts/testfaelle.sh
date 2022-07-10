@@ -151,7 +151,7 @@ richtlinien_skalierbarkeit() {
 # Pod-Skalierbarkeit
 # Durchsatz bei steigender Anzahl von Pods
 pod_skalierbarkeit() {
-    NUM_PODS=( 1 5 10 15 20 25 30 35 40 45 50 55 60 )
+    NUM_PODS=( 1 5 10 15 20 25 30 35 40 45 50 )
     NUM_POLICIES=( 1 )
     FORTIO_SCRIPT='./scripts/run-fortio-load.sh --qps=0 --connections=32 --duration=30s --server-address=fortio-server-service --port=8080 --content-type=application/json'
 
