@@ -1,8 +1,14 @@
-# Netzwerkrichtlinien Messungen
+# Evaluation der proxybasierten Ansätze von Istio und Cilium zur Zugriffskontrolle mit L7-Netzwerkrichtlinien in Cloudnativen Anwendungssystemen
 
-Das Projekt beinhaltet den notwendigen Code, um die Messungen zum Vergleich der Performance der L7-Netzwerkrichtlinien zwischen Cilium und Istio durchführen zu können. 
+Studiengang: M. Sc. Wirtschaftsinformatik (in Teilzeit) an der FH Münster
+Modul: Forschungs- und Entwicklungsprojekt
+Semester: Sommersemester 2022
+Student: Andre Farwick
 
-## GKE-Cluster managen
+Repository zum Paper "Evaluation der proxybasierten Ansätze von Istio und Cilium zur Zugriffskontrolle mit L7-Netzwerkrichtlinien in Cloudnativen Anwendungssystemen". Das Projekt beinhaltet den notwendigen Code, um die Messungen zum Vergleich der Performance der L7-Netzwerkrichtlinien zwischen Cilium und Istio durchführen zu können. 
+
+## Setup
+### GKE-Cluster managen
 
 Vorraussetzungen: 
 - gcloud ist installiert
@@ -12,5 +18,12 @@ Vorraussetzungen:
 
 Erstellen eines GKE Clusters: 
 `./scripts/manage-gke-cluster.sh create-gke-cluster <num-nodes>`
+
+### Kubeadm-Cluster managen
+
+
+## Messungen durchführen
+
+## Evaluation
 
 
