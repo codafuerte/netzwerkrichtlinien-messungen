@@ -3,7 +3,7 @@
 Studiengang: M. Sc. Wirtschaftsinformatik (in Teilzeit) an der FH Münster \
 Modul: Forschungs- und Entwicklungsprojekt\
 Semester: Sommersemester 2022\
-Student: Andre Farwick\
+Student: Andre Farwick
 
 Repository zum Paper "Evaluation der proxybasierten Ansätze von Istio und Cilium zur Zugriffskontrolle mit L7-Netzwerkrichtlinien in Cloudnativen Anwendungssystemen". Das Projekt beinhaltet den notwendigen Code, um die Messungen zum Vergleich der Performance der L7-Netzwerkrichtlinien zwischen Cilium und Istio durchführen zu können.
 
@@ -39,7 +39,7 @@ Swap ausschalten: \
 `./scripts/manage-kubeadm-cluster.sh disable-swap` \
 ContainerD als Runtime vorbereiten: \
 `./scripts/manage-kubeadm-cluster.sh setup-containerd` \
-Die zuvor genannten Schritte können auch mit dem Aufruf `./scripts/manage-kubeadm-cluster.sh setup-cluster-node` zusammen durchgeführt werden. \
+Die zuvor genannten Schritte können auch mit dem Aufruf `./scripts/manage-kubeadm-cluster.sh setup-cluster-node` zusammen durchgeführt werden.
 
 Anschließend muss das Cluster initialisiert werden: \
 `./scripts/manage-kubeadm-cluster.sh init-cluster` \
