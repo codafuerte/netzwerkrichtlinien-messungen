@@ -53,7 +53,8 @@ In dem Testscript sind fogelnde Testfälle definiert:
 - durchsatz: maximale Last bei 32 threads
 - richtlinien-skalierbarkeit: maximale Last bei 32 threads und sich ändernder Anzahl an Richtlinien
 - pod-skalierbarkeit: maximale Last bei 32 threads und sich ändernder Anzahl an Server-Replikationen
-Bei der Durchführung der Messungen wird jeweils die Latenz under Durchsatz mit Fortio gemessen und die Arbeitsspeicher und CPU-Benutzung mit top auf der Knoten, auf dem der Fortio Server läuft. \ 
+
+Bei der Durchführung der Messungen wird jeweils die Latenz und der Durchsatz mit Fortio gemessen und die Arbeitsspeicher und CPU-Benutzung mit top. Top wird über ssh auf dem Knoten, auf dem der Fortio Server läuft, im Batchmodus ausgeführt und die Ergebnisse werden nach Durchführung an den Rechner, auf dem das Script läuft rüberkopiert. \
 Vor jedem Durchlaufen eines Testfall wird in dem Script Cilium als CNI-Plugin und gegebenenfalls Istio installiert, der Fortio Client und Server deployed, sowie die Richtlinien erstellt und angewendet. Nach der Durchführung des Tests werden die Richlinien, die Fortio deployments und Cilium und gegebenfalls Istio wieder gelöscht. 
 Befehl zur Durchführung aller Testfälle (latenz, durchsatz, richltinien-skalierbarkeit, pod-skalierbarkeit): 
 `testfaelle.sh alle-messungen <Implementierung> <Anzahl der Wiederholungen des Tests> <Hostname auf den der Fortio Client deployed werden soll> <Hostname auf den die Fortio Server deployed werden sollen>` \
